@@ -1,57 +1,44 @@
-const express = require('express');
-const app = express();
-
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const mysql = require('mysql'); 
+const util = require('util');
 
 const secretKey = 'my2w7wjd7yXF64FIADfJxNs1oupTGAuW';
 
-const users = [
-  {
-    username: 'admin',
-    password: 'secret'
-  },
-  {
-    username: 'noadmin',
-    password: 'noPow3r'
-  },
-  {
-    username: 'bob',
-    password: 'thisIsNotAPasswordBob'
-  }
-];
-
-const saltedHash = (password, salt) => {
-  const hash = crypto.createHmac('sha512', salt);
-  hash.update(password);
-  return hash.digest('hex');
-}
-
 export const loginFunction = (username, password) => {
-  
-  // checks for the username
-  const validateUser = (req, res, next) => {
-    const { username, password } = req.body;
-    const user = users.find(u => u.username === username);
-    if (!user) {
-      return res.status(403).send('Cannot find user');
-    }
 
-    // salts and hashes password
-    const salt = username + secretKey;
-    const hashedPass = saltedHash(password, salt);
+  const connection = mysql.createConnection({
+    host: 'http://sre-bootcamp-selection-challenge.cabf3yhjqvmq.us-east-1.rds.amazonaws.com/',
+    user: 'secret',
+    password: 'noPow3r',
+    database: 'bootcamp_tht',
+  });
 
-    // validates password
-    if (user.password !== hashedPass) {
-      return res.status(403).send('Wrong password');
+  connection.connect();
+
+  // query database for username, password, salt, role
+  connection.query = util.promisify(connection.query);
+  try {
+    const queried = connection.query(
+      "SELECT username, password, salt, role FROM users WHERE username = ?", [username]
+    );
+
+    const obj = results[0];
+
+    //hash with the SHA512 Algorithm and append salted value
+    const hashed = crypto.createHash('sha512');
+    hashed.update(password + obj.salt);
+    hashed.digest('hex');
+
+    if(!hashed.localeCompare(obj.password)){
+      const token = jwt.sign({ user: obj.username }, { role: obj.role}, secretKey, { expiresIn: '24h' });
+      return token;
     }
-    next();
+    return null;
+
+  } catch (e) {
+    console.error(e)
   }
 
-  // logs in the user
-  app.post('/login', validateUser, (req, res) => {
-    const {username} = req.body;
-    const token = jwt.sign({ username }, secretKey, { expiresIn: '48h' });
-    res.send({ token });
-  })
+  connection.end();
 }
