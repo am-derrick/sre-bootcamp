@@ -26,7 +26,7 @@ export const loginFunction = (username, password) => {
       "SELECT username, password, salt, role FROM users WHERE username = ?", [username]
     );
 
-    const obj = results[0];
+    const obj = queried[0];
 
     //hash with the SHA512 Algorithm and append salted value
     const hashed = crypto.createHash('sha512');
