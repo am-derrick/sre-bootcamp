@@ -6,7 +6,7 @@ const util = require('util');
 // should I put this in a .env? It's not wise to share secret keys in a public repo
 const secretKey = 'my2w7wjd7yXF64FIADfJxNs1oupTGAuW';
 
-export const loginFunction = (username, password) => {
+export const loginFunction = async (username, password) => {
 
   // mysql database details
   const connection = mysql.createConnection({
@@ -22,16 +22,14 @@ export const loginFunction = (username, password) => {
   // query database for username, password, salt, role
   connection.query = util.promisify(connection.query);
   try {
-    const queried = connection.query(
+    const queried = await connection.query(
       "SELECT username, password, salt, role FROM users WHERE username = ?", [username]
     );
 
     const obj = queried[0];
 
     //hash with the SHA512 Algorithm and append salted value
-    const hashed = crypto.createHash('sha512');
-    hashed.update(password + obj.salt);
-    hashed.digest('hex');
+    const hashed = crypto.createHash('sha512').update(password + obj.salt).digest('hex');
 
     if(!hashed.localeCompare(obj.password)){
       const token = jwt.sign({ user: obj.username }, { role: obj.role}, secretKey, { expiresIn: '24h' });
