@@ -12,6 +12,7 @@ export const protectFunction = (authorization) => {
       return 'Success!';
     }
   } catch (error) {
-    return res.status(401).send(error);
+    console.error("Unauthenticated");
+    return null;
   }
 }
