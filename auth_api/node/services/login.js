@@ -14,6 +14,7 @@ export const loginFunction = (username, password) => {
     database: 'bootcamp_tht',
   });
 
+  // connect to database
   connection.connect();
 
   // query database for username, password, salt, role
@@ -40,5 +41,6 @@ export const loginFunction = (username, password) => {
     console.error(e)
   }
 
+  // close connection
   connection.end();
 }
