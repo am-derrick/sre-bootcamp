@@ -3,10 +3,12 @@ const crypto = require('crypto');
 const mysql = require('mysql'); 
 const util = require('util');
 
+// should I put this in a .env? It's not wise to share secret keys in a public repo
 const secretKey = 'my2w7wjd7yXF64FIADfJxNs1oupTGAuW';
 
 export const loginFunction = (username, password) => {
 
+  // mysql database details
   const connection = mysql.createConnection({
     host: 'http://sre-bootcamp-selection-challenge.cabf3yhjqvmq.us-east-1.rds.amazonaws.com/',
     user: 'secret',
