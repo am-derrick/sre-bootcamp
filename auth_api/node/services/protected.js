@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 // should I put this in a .env?
 const secretKey = 'my2w7wjd7yXF64FIADfJxNs1oupTGAuW';
 
