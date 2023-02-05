@@ -12,7 +12,7 @@ export const protectFunction = (authorization) => {
       return 'Success!';
     }
   } catch (error) {
-    console.error("Unauthenticated");
+    console.error("You are under protected data");
     return null;
   }
 }
