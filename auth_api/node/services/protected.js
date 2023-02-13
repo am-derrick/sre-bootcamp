@@ -9,10 +9,10 @@ export const protectFunction = (authorization) => {
     const verified = jwt.verify(authorization, secretKey);
     
     if(verified) {
-      return 'Success!';
+      return "You are under protected data";
     }
   } catch (error) {
-    console.error("You are under protected data");
+    console.error("Invalid Token");
     return null;
   }
 }
