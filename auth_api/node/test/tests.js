@@ -5,25 +5,25 @@ import { protectFunction } from '../services/protected'
 const expect = chai.expect;
 
 describe('loginFunction()', function () {
-  it('Test login', function () {
+  it('Test login', async function () {
 
-    expect("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c").to.be.equal(loginFunction("admin", "secret"));
-  });
+    expect("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4ifQ.StuYX978pQGnCeeaj2E1yBYwQvZIodyDTCJWXdsxBGI").to.be.equal(await loginFunction("admin", "secret"));
+  }).timeout(10000); // increase the timeout to beyond 2000ms
 
-  it('Login Failure', function () {
+  it('Login Failure', async function () {
 
-    expect(null).to.be.equal("admin", "wrong")
-  });
+    expect(null).to.be.equal(await loginFunction("admin", "wrong"))
+  }).timeout(10000); // increase the timeout to beyond 2000ms
 });
 
 describe('protectFunction()', function () {
   it('Test protected', function () {
 
-    expect("You are under protected data").to.be.equal(protectFunction("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"));
+    expect("You are under protected data").to.be.equal(protectFunction("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4ifQ.StuYX978pQGnCeeaj2E1yBYwQvZIodyDTCJWXdsxBGI"));
   });
 
   it("Invalid token authentication", function () {
     
-    expect(null).to.be.equal("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c____")
+    expect(null).to.be.equal(protectFunction("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4ifQ.StuYX978pQGnCeeaj2E1yBYwQvZIodyDTCJWXdsxBGI_extra"))
   });
 });
